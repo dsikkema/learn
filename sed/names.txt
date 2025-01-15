@@ -1,0 +1,3 @@
+John Smith lives in Paris
+Mary Johnson works in London
+Tom Brown studies in Tokyo

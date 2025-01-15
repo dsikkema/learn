@@ -1,0 +1,7 @@
+UPPER CASE LINE
+Mixed Case Line
+123 number line
+ANOTHER UPPER LINE
+lower case line
+## COMMENT LINE ##
+Final Mixed Line

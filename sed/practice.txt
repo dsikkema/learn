@@ -1,0 +1,4 @@
+apple APPLE apple
+banana BANANA
+cherry CHERRY cherry cherry
+date DATE date

@@ -1,0 +1,10 @@
+version: '3'
+services:
+  service-a:
+    image: nginx
+    ports:
+      - "9123:80"
+  
+  service-b:
+    image: ubuntu
+    command: bash -c "apt-get update && apt-get install -y curl && while true; do curl http://service-a:80; sleep 5; done"

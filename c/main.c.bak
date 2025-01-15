@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+  int* buffer; 
+  int* read_ptr;
+  int* write_ptr;
+  int size;
+  int count;
+} CircularBuffer;
+
+CircularBuffer* create_buffer(int size) {
+  CircularBuffer* cb = (CircularBuffer*)malloc(sizeof(CircularBuffer));
+  cb->buffer = (int*)malloc(size * sizeof(int));
+  cb->read_ptr = cb->buffer;
+  cb->write_ptr = cb->buffer;
+  cb->size = size;
+  cb->count = 0;
+
+  return cb;
+}
+
+int read_from_buffer(CircularBuffer* cb, int* result) {
+  if (cb->count == 0) {
+    return -1;
+  } 
+  
+  *result = *(cb->read_ptr);
+  cb->read_ptr++;
+
+  if (cb->read_ptr >= cb->buffer + cb->size) {
+    cb->read_ptr = cb->buffer;
+  } 
+
+  cb->count--;
+  return 0;
+}
+
+int write_to_buffer(CircularBuffer* cb, int val) {
+  if (cb->count == cb->size) {
+    return -1;
+  }
+
+  *(cb->write_ptr) = val;
+  cb->write_ptr++;
+  
+  if (cb->write_ptr >= cb->buffer + cb->size) {
+    cb->write_ptr = cb->buffer;
+  }
+
+  cb->count++;
+  return 0;
+}
+
+int test_buffer() {
+  CircularBuffer* cb = create_buffer(5);
+
+  printf("Writing loop\n");
+  for (int i=0; i<7; i++) {
+    // just for lols
+    if (i==3) {
+      int lmao;
+      read_from_buffer(cb, &lmao);
+      printf("Read val: %d, Count: %d\n", lmao, cb->count);
+    }
+
+    int result = write_to_buffer(cb, i);
+    
+    if (result == 0) {
+      printf("Write val: %d, Count: %d\n", i, cb->count);
+    } else {
+      printf("Buffer full; couldn't write. Count=%d\n", cb->count);
+    }
+  }
+
+  printf("Reading loop\n");
+  for (int i=0; i<7; i++) {
+    // just for lols
+    if (i==3) {
+      int lmao = 99;
+      write_to_buffer(cb, lmao);
+      printf("Wrote val: %d, Count: %d\n", lmao, cb->count);
+    }
+    int read_val;
+    int result = read_from_buffer(cb, &read_val);
+    if (result == 0) {
+      printf("Read val: %d, Count: %d\n", read_val, cb->count);
+    } else {
+      printf("Buffer empty; couldn't read. Count=%d\n", cb->count);
+    }
+  }
+
+  free(cb->buffer);
+  free(cb);
+  return 0;
+}
+
+int main() {
+  printf("Offset of buffer: %lu\n", offsetof(CircularBuffer, buffer));
+  printf("Offset of read_ptr: %lu\n", offsetof(CircularBuffer, read_ptr));
+  printf("Offset of write_ptr: %lu\n", offsetof(CircularBuffer, write_ptr));
+  printf("Offset of size: %lu\n", offsetof(CircularBuffer, size));
+  printf("Offset of count: %lu\n", offsetof(CircularBuffer, count));
+
+  test_buffer();
+}
