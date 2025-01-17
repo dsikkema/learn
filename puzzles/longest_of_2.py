@@ -1,10 +1,7 @@
-#!python
-from pathlib import Path
-from contextlib import contextmanager
 """
 Given a string containing only lowercase letters, find the length of the longest substring that contains exactly two
-distinct characters. For example, if the input is "ecebaaacd", the answer would be 4 - the substring "baaa" contains
-'a' and 'c' and has length 5. If the input is "abcabcabc", the answer would be 2, as any substring with exactly two 
+distinct characters. For example, if the input is "ecebaaacd", the answer would be 4 - the substring "baaa". If the
+input is "abcabcabc", the answer would be 2, as any substring with exactly two
 distinct characters can only be length 2 in this case.
 
 In this file I also use doctest (run with `pytest --doctest-modules module.py`), see the result function's
@@ -12,6 +9,8 @@ docstring defining test cases.
 
 Also wrote a tiny logger contextmanager
 """
+from pathlib import Path
+from contextlib import contextmanager
 
 def f(string):
     # using this cool logger because as long as I'm using pytest with doctest, I can't print debug output
@@ -19,7 +18,6 @@ def f(string):
         if len(string) <= 1:
             return None
         
-        first, second = None, None
         max_win_len = 0
         max_win = ""
 
@@ -30,10 +28,17 @@ def f(string):
         i = 1
        
         """
-        i always represents the index of the ending character of a sliding window. It always advances one-by-one,
-        checking each new character that comes into the window. When a third character is found, the beginning
-        of the window jumps forward just far enough so that the window only contains two characters again. And
-        rolling max checks happen every loop
+        `i` always represents the index of the ending character of a sliding window. It always advances one-by-one, 
+        checking each new character that comes into the window. When a third character is found, the beginning of the 
+        window jumps forward just far enough so that the window only contains two characters again. And rolling max 
+        updates happen every loop.
+        
+        Hence, `window` is always a string that consists of no more than two unique characters. `first` and `second` 
+        represent the two characters which are the unique characters comprising the window. `second` is set when it's 
+        found, and if it's never found then it means the string is only made of one character and has no answer.
+        
+        because we did length validation at the beginning of this function, if `second` is not None at the end of the 
+        loop, then then we are certain that an answer exists and we've found it
         """
         while i < len(string):
             c = string[i]
