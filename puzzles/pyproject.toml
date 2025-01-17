@@ -1,0 +1,20 @@
+[project]
+name = "puzzles"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pre-commit>=4.0.1",
+    "pytest>=8.3.4",
+    "ruff>=0.9.2",
+]
+
+[tool.ruff]
+# Set the maximum line length to 88 (or your preferred length)
+line-length = 115
+
+# Configure formatting options
+[tool.ruff.format]
+# Quote style
+quote-style = "double"
