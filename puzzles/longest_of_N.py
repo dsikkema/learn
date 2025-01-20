@@ -8,67 +8,72 @@ In this file I also use doctest (run with `pytest --doctest-modules module.py`),
 docstring defining test cases.
 
 Also wrote a tiny logger contextmanager
+
+Update: support n unique chars (and also, as before, return the string which comprises the match: namely the first such string found)
 """
 from pathlib import Path
 from contextlib import contextmanager
 
-def f(string):
+def f(string, n):
+    assert n >= 2
     # using this cool logger because as long as I'm using pytest with doctest, I can't print debug output
     with logging() as logger:
-        if len(string) <= 1:
+        if len(string) < n:
             return None
         
         max_win_len = 0
         max_win = ""
 
-        first = string[0]
-        last_pos_first = 0
-        window = first
-        second = None
+        uniqs = list(
+            (string[0])
+        )
+
+        uniq_pos = {string[0]: 0}
+        window = string[0]
         i = 1
-       
+
         """
         `i` always represents the index of the ending character of a sliding window. It always advances one-by-one, 
-        checking each new character that comes into the window. When a third character is found, the beginning of the 
-        window jumps forward just far enough so that the window only contains two characters again. And rolling max 
-        updates happen every loop.
+        checking each new character that comes into the window. When a N+1th  character is found, the beginning of the 
+        window jumps forward just far enough so that the window only contains N characters again. And rolling max 
+        updates happen every loop. `uniq_pos` is used to track the last position each character was found at, so that
+        whenever that character "falls out" of the window, we know where to jump the window up to.
         
-        Hence, `window` is always a string that consists of no more than two unique characters. `first` and `second` 
-        represent the two characters which are the unique characters comprising the window. `second` is set when it's 
-        found, and if it's never found then it means the string is only made of one character and has no answer.
-        
-        because we did length validation at the beginning of this function, if `second` is not None at the end of the 
+        Hence, `window` is always a string that consists of no more than N unique characters.         
+
+        because we did length validation at the beginning of this function, if N uniq chars have not been found  at the end of the 
         loop, then then we are certain that an answer exists and we've found it
         """
         while i < len(string):
             c = string[i]
-            if second is None and c != first:
-                second = c
-            if c == first:
-                last_pos_first = i
+            if len(uniqs) < n and not c in uniqs:
+                uniqs.append(c)
+
+            if c in uniqs:
                 window += c
-            elif c == second:
-                last_pos_second = i
-                window += c
-            else: # window now starts after the last instance of previous "first", until c
-                first = second
-                second = c
-                
-                if last_pos_first + max_win_len + 2 > len(string):
+            else:
+                # The "oldest" character (beginning of list) is "pushed out" by the newly arrived character as we
+                # scan through
+                popped = uniqs.pop(0)
+                popped_pos = uniq_pos[popped] 
+                del uniq_pos[popped]
+                uniqs.append(c)
+                # To form a new window longer than the previous max would require going past the bounds of the string,
+                # so quit early here
+                if popped_pos + max_win_len + 2 > len(string):
                     logger.log("Breaking early")
                     break
+                window = string[popped_pos + 1 : i + 1]
 
-                window = string[last_pos_first + 1 : i + 1]
-                last_pos_first = last_pos_second
-                last_pos_second = i
+            uniq_pos[c] = i
+
             if len(window) > max_win_len:
                 max_win_len = len(window)
                 max_win = window
 
             i += 1
-        if second is None:
+        if len(uniqs) < n:
             return None
-
         """
             # naive implementation
             for i in range(len(string) - 1):
@@ -105,7 +110,7 @@ def logging():
 
     
 
-def result(string):
+def result(string, n = 2):
     """
     >>> assert result("") is None
     >>> assert result("a") is None
@@ -151,6 +156,39 @@ def result(string):
     (9, 'aaaaaabbb')
     >>> result("ababcdcdefefghghghij")
     (6, 'ghghgh')
+    >>> assert result("", 3) is None
+    >>> assert result("a", 3) is None
+    >>> assert result("ab", 3) is None
+    >>> assert result("abb", 3) is None
+    >>> assert result("aaa", 3) is None
+    >>> result("abc", 3)
+    (3, 'abc')
+    >>> result("abcc", 3)
+    (4, 'abcc')
+    >>> result("abccc", 3)
+    (5, 'abccc')
+    >>> result("cabcc", 3)
+    (5, 'cabcc')
+    >>> result("cabcca", 3)
+    (6, 'cabcca')
+    >>> result("cabzcca", 3)
+    (4, 'bzcc')
+    >>> result("cabzzzzzca", 3)
+    (7, 'abzzzzz')
+    >>> result("abcdabcdabcdabccccc", 3)
+    (7, 'abccccc')
+    >>> result("abcdefghij", 10)
+    (10, 'abcdefghij')
+    >>> result("aabcdefghij", 10)
+    (11, 'aabcdefghij')
+    >>> result("abcdefghijj", 10)
+    (11, 'abcdefghijj')
+    >>> result("abcdeefghij", 10)
+    (11, 'abcdeefghij')
+    >>> assert result("abcd", 10) is None
+    >>> assert result("abcdffffffffffffff", 10) is None
+    >>> result("abcdefghijjjjjjjjjjjzz", 10)
+    (21, 'bcdefghijjjjjjjjjjjzz')
     """
 
-    return f(string)
+    return f(string, n)
