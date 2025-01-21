@@ -1,0 +1,8 @@
+Suggestions:
+
+[ ] Structures and memory alignment - Learn about struct padding, packing, and how data is arranged in memory.
+[ ] File I/O and system calls - Understanding the difference between buffered and unbuffered I/O, working with file descriptors.
+[x] Bitwise operations and bit fields - Manipulating individual bits, bit masks, flags, and using bit fields in structs.
+[x] Process control and signals - Fork/exec pattern, signal handling, and process management.
+[ ] Socket programming - Network programming basics, creating TCP/UDP servers and clients.
+
