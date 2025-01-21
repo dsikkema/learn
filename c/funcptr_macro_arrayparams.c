@@ -32,19 +32,29 @@ int weird_funcptr_demo() {
   int (*proper_multiply_func_ptr)(int, int) = multiply; // This is the right way to declare func ptr to multiply()
   arbitrary_ptr = (void*) multiply; // I can also cast it to void*, though.
 
+  printf("Implicitly, void fn is converted to other types. Call multiply:\n");
   int (*func_ptr)(int, int);
   func_ptr = arbitrary_ptr; // ... and then assign it, without coercion, into the proper type again
   int res = func_ptr(2, 3); // ... and call it.
   printf("result=%d\n", res);
 
-  // Works the other way to: assign an argumentless void function to a wrong type, and call it anyway
+  //
+  printf("Doesn't exactly work the other way: must explicitly coerce non-void func ptr to void\n");
   int (*int_fn_ptr_with_args)(int, char, long, long, long, size_t);
   int_fn_ptr_with_args = (int (*)(int, char, long, long, long, size_t))sayHello;
   // int_fn_ptr_with_args(); // won't work, expects args
-  // ((void*)int_fn_ptr_with_args)(); // won't work, casting to a void pointer is not the same as casting to a function pointer
+
+  // By the way, this won't work either: it's the wrong syntax. Casting to a void pointer is not the same
+  // as casting to a function pointer:
+
+  // ((void*)int_fn_ptr_with_args)(); 
 
   // This actually does work, and says hello
   ((void (*)())int_fn_ptr_with_args)();
+
+  printf("Can use typedef to \"shortcut\" the argless void function ptr type, and coerce to that too:\n");
+  typedef void (*void_fn_ptr)(void);
+  ((void_fn_ptr)sayHello)();
 }
 
 // void transform_arr(int arr[1]) {
@@ -79,7 +89,7 @@ int demo_array_callback() {
 
   size_t len=ARRAY_LENGTH(arr);
   printf("len: %zu\n", len);
-  printf("Array before transform with callback:\n");
+  printf("Array before transform with callback (square):\n");
   print_arr(arr, len);
   transform_arr(arr, len, square);
   printf("...and after:\n");
