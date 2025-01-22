@@ -9,12 +9,12 @@ Covered topics:
 - pass by ref vs pass by val, and returning addresses / pointers
 - sizeof: accessing fields in a struct by coercing and doing arithmetic on a pointer to the struct
 - null termination of char arrays
+- Socket programming - a simple client/server that send text back and forth over a tcp connection
 
 Not covered:
 - detailed bitwise operations
 - varargs
 - File I/O and system calls - Understanding the difference between buffered and unbuffered I/O, working with file descriptors.
-- Socket programming - Network programming basics, creating TCP/UDP servers and clients.
 
 Save for later (interested, but not now):
 - using LSPs or other IDE-like functionality for c programming in vim (code navigation etc)

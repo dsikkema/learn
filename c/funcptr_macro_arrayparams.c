@@ -23,7 +23,7 @@ int square(int a) {
 }
 
 int weird_funcptr_demo() {
-  printf("\nThis part of the demo will showcase crazy function pointer declarations and coercions\n"); 
+  printf("\nThis part of the demo will showcase crazy function pointer declarations and casting\n"); 
 
   // This was my first line; it's a problem because it's a memory leak! Immediately overwritten malloc'd space.
   // void* arbitrary_ptr = malloc(sizeof(size_t));  
@@ -34,12 +34,12 @@ int weird_funcptr_demo() {
 
   printf("Implicitly, void fn is converted to other types. Call multiply:\n");
   int (*func_ptr)(int, int);
-  func_ptr = arbitrary_ptr; // ... and then assign it, without coercion, into the proper type again
+  func_ptr = arbitrary_ptr; // ... and then assign it, with coercion, into the proper type again
   int res = func_ptr(2, 3); // ... and call it.
   printf("result=%d\n", res);
 
   //
-  printf("Doesn't exactly work the other way: must explicitly coerce non-void func ptr to void\n");
+  printf("Doesn't exactly work the other way: must explicitly cast non-void func ptr to void\n");
   int (*int_fn_ptr_with_args)(int, char, long, long, long, size_t);
   int_fn_ptr_with_args = (int (*)(int, char, long, long, long, size_t))sayHello;
   // int_fn_ptr_with_args(); // won't work, expects args
@@ -52,7 +52,7 @@ int weird_funcptr_demo() {
   // This actually does work, and says hello
   ((void (*)())int_fn_ptr_with_args)();
 
-  printf("Can use typedef to \"shortcut\" the argless void function ptr type, and coerce to that too:\n");
+  printf("Can use typedef to \"shortcut\" the argless void function ptr type, and cast to that too:\n");
   typedef void (*void_fn_ptr)(void);
   ((void_fn_ptr)sayHello)();
 }

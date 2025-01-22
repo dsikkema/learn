@@ -7,22 +7,20 @@
 
   CircularBuffer* cb = create_buffer(5);
   write_to_buffer(cb, 7);
-  void* coerced_cb = (void*)cb;
-  void* coerced_ptr_to_read_ptr = coerced_cb + 8;
-  int** ptr_to_read_ptr = (int**)coerced_ptr_to_read_ptr;
+  void* cast_cb = (void*)cb;
+  void* cast_ptr_to_read_ptr = cast_cb + 8;
+  int** ptr_to_read_ptr = (int**)cast_ptr_to_read_ptr;
   int* derived_read_ptr = *ptr_to_read_ptr;
   int read_val = *derived_read_ptr;
   printf("Value to read next: %d\n", read_val);
 
-I was fundamentally dealing with a pointer to a pointer. cb was already a pointer, and while what it "had" was a pointer to an int, I shifted "pointer to cb" to "the right" so that it became "pointer to (pointer to int)", hence needed to "de-coerce" into a int**. This becomes readily apparent when I see what the arrow operator hides:
+I was fundamentally dealing with a pointer to a pointer. cb was already a pointer, and while what it "had" was a pointer to an int, I shifted "pointer to cb" to "the right" so that it became "pointer to (pointer to int)", hence needed to cast into a int**. This becomes readily apparent when I see what the arrow operator hides:
 
   int direct_read_val = *(*cb).read_ptr;
 
 The two different asterisks there show everything you need to know--pointer to a pointer.
 
 Isaac also showed me how to treat an array as a pointer.
-
-
  */
 
 typedef struct {
@@ -77,6 +75,7 @@ int write_to_buffer(CircularBuffer* cb, int val) {
 }
 
 int test_buffer() {
+  printf("\nDemo circular buffer\n\n");
   CircularBuffer* cb = create_buffer(5);
 
   printf("Writing loop\n");
@@ -119,19 +118,25 @@ int test_buffer() {
   return 0;
 }
 
-int main() {
+void demo_ptr_casting() {
+  printf("\nDemo pointer casting\n\n");
   // here is how to get offset
   // printf("Offset of buffer: %lu\n", offsetof(CircularBuffer, buffer));
   CircularBuffer* cb = create_buffer(5);
   write_to_buffer(cb, 7);
   // int val = *cb->read_ptr;
   // int* val = *((int**)(((void*)cb) + 8));
-  void* coerced_cb = (void*)cb;
-  void* coerced_ptr_to_read_ptr = coerced_cb + 8;
-  int** ptr_to_read_ptr = (int**)coerced_ptr_to_read_ptr;
+  void* cast_cb = (void*)cb;
+  void* cast_ptr_to_read_ptr = cast_cb + 8;
+  int** ptr_to_read_ptr = (int**)cast_ptr_to_read_ptr;
   int* derived_read_ptr = *ptr_to_read_ptr;
   int read_val = *derived_read_ptr;
   int direct_read_val = *(*cb).read_ptr;
   printf("Value to read next: %d\n", read_val);
   printf("Value to read next (direct): %d\n", direct_read_val);
+}
+
+int main() {
+  test_buffer();
+  demo_ptr_casting();
 }
