@@ -164,6 +164,9 @@ int ll_del(node* ll, int idx) {
 /**
  * Works for all but deleting the last node. 
  *
+ * It's called a homeaway delete because an interviewer told me about this trick during
+ * an interview for HomeAway (that job was cool).
+ *
  * return -1 for non-existent index, -2 for last node
  */
 int ll_del_homeaway(node* ll, int idx) {
