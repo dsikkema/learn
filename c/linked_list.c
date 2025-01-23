@@ -99,6 +99,10 @@ node* create_ll() {
 node* ll_retrieve_node(node* ll, int idx) {
   int i = 0;
   node* cur = ll->next;
+  
+  if (cur == NULL || extreme_null(cur)) {
+    return NULL; // empty list, no indexes will exist
+  }
 
   while (i < idx && cur->next != NULL && (!extreme_null(cur->next))) {
     cur = cur->next;
@@ -167,7 +171,7 @@ int ll_del(node* ll, int idx) {
  * It's called a homeaway delete because an interviewer told me about this trick during
  * an interview for HomeAway (that job was cool).
  *
- * return -1 for non-existent index, -2 for last node
+ * return -1 for non-existent index
  */
 int ll_del_homeaway(node* ll, int idx) {
   debug("enter homeaway");
@@ -336,8 +340,13 @@ void demo_extreme_nulls() {
 }
 
 
-int main() {
+int do_demos() {
   demo_extreme_nulls();
   demo_ll();
   return 0;
 }
+
+// int main() {
+//   do_demos();
+//   return 0;
+// }
