@@ -23,27 +23,5 @@ uint32_t hash(int val) {
 }
 
 int main() {
-  int array[1024] = { 0 };
-
-  for (int i=0; i<1024; i++) {
-    array[i] = -1;
-  }
-
-  for (int i=0; i<256; i++) {
-    int k = hash(i) % 1024;
-    int v = 10 * i;
-    if (array[k] != -1) {
-      printf("Insert collision: %d at %d\n", i, k);
-      break;
-    }
-
-    array[k] = v;
-    printf("Store %d:%d\n", i, v);
-  }
-
-  for (int i=0; i<256; i++) {
-    int v = array[hash(i) % 1024];
-    printf("Retrieved %d:%d\n", i, v);
-  }
 
 }
