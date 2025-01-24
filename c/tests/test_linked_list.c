@@ -2,8 +2,13 @@
 #include "linked_list.h"
 
 
-void setUp(void) {}
-void tearDown(void) {}
+static node* list;
+void setUp(void) {
+  list = create_ll();
+}
+void tearDown(void) {
+  free_list(list);
+}
 
 static int (*current_delete)(node*, int);
 
@@ -105,7 +110,6 @@ void test_add_after_deletion(void) {
 }
 
 void test_invalid_indices(void) {
-   node* list = create_ll();
    ll_add(list, 10);
    
    int result;

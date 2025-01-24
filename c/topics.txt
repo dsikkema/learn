@@ -10,9 +10,18 @@ Covered topics:
 - sizeof: accessing fields in a struct by coercing and doing arithmetic on a pointer to the struct
 - null termination of char arrays
 - Socket programming - a simple client/server that send text back and forth over a tcp connection
+- implement linkedlist
+- implement hashing, including bitwise operations
+- unit tests with unity (including sizing and assertion messages)
+- importing .h files
+- macros
+- calculating array length using sizeof arr/sizeof type
+- printing raw memory contents as hexadecimal to debug 
+- 2d array
+- variable vs fixed size arrays and initializing them
+- implement hashmap
 
 Not covered:
-- detailed bitwise operations
 - varargs
 - File I/O and system calls - Understanding the difference between buffered and unbuffered I/O, working with file descriptors.
 

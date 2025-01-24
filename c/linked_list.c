@@ -1,7 +1,6 @@
 /**
  * TOODO:
  *  - support 0 vals in array (that don't conflict with EXTREME NULL)
- *  - use a unit test suite!
  *
  * List is structured so that empty list always has a head, 0th value is always stored 
  * in head->next->val, not head->val.
@@ -20,7 +19,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <stdbool.h>
 
 #define debug_enabled 0
 
@@ -47,6 +45,16 @@ node* create_node(int val) {
   return result;
 }
 
+void free_list(node* ll) {
+  node* cur = ll;
+  node* nxt = NULL;
+  while (cur != NULL) {
+    nxt = cur->next;
+    free(cur);
+    cur = nxt;
+  }
+}
+
 /**
  * Todo: extreme null needs to be a once-randomly generated sequence of bytes,
  * all-zeroes is actually plausible for real struct (if val = 0)
@@ -62,6 +70,12 @@ int set_extreme_null(node* ptr) {
   return 0;
 }
 
+/**
+ * This is a toy concept, not suppoed to be safe, to push the limits of weird
+ * memory mgmt with C. It turns the memory address into kind of sentinel value
+ * so that other pointers, even without being NULL, can be interpretted like
+ * NULL if they point to an address filled with this data.
+ */
 int extreme_null(node* ptr) {
   if (ptr == NULL) {
     return 0;
@@ -304,6 +318,7 @@ void demo_ll() {
   printf("But now delete from the middle again, idx=2\n");
   ll_del_homeaway(ll, 2);
   print_ll(ll);
+  free_list(ll);
 
   printf("Done\n");
 
@@ -335,8 +350,7 @@ void demo_extreme_nulls() {
   printf("After set\n");
   debug_mem(ptr);
   printf("Is extreme? %d\n", extreme_null(ptr));
-  free(ptr);
-
+  free_list(ptr);
 }
 
 

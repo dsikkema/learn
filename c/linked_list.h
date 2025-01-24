@@ -22,4 +22,8 @@ int ll_del(node* ll, int idx);
 
 
 int ll_del_homeaway(node* ll, int idx);
+
+void free_list(node* list);
+
+int extreme_null(node*);
 #endif
