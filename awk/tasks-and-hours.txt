@@ -1,0 +1,9 @@
+Writing design for api
+2 hrs
+
+Building out prototype
+1 hrs
+
+Debugging null pointer exceptions
+6 hrs
+
