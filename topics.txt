@@ -1,0 +1,13 @@
+not covered yet:
+- Python
+  - ruff, linter and formatter
+  - mypi (type checker)
+  - pydantic (validation, serde)
+  - pre-commit
+- unix/sh
+  - grep
+- sql (postgres)
+  - lateral
+  - explain
+  - normalization levels
+- cassandra
