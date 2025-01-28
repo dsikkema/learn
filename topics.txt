@@ -11,3 +11,7 @@ not covered yet:
   - explain
   - normalization levels
 - cassandra
+- frontend
+  - next.js
+  - react
+
