@@ -1,0 +1,11 @@
+START Transaction ABC
+  User: admin
+  Action: delete
+  Target: /etc/config
+END Transaction ABC
+
+START Transaction DEF
+  User: guest
+  Action: read
+  Target: /var/log
+END Transaction DEF
