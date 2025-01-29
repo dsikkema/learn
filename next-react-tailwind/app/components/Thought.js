@@ -15,6 +15,10 @@ export default function Thought({ in_words="I forgot what I was thinking." }) {
       Also, note the ability to destructure into a list as well. Destructuring to/from an
       object relies on the naming of keys, while destructuring to/from a list relies
       on ordering
+
+      the setter callback - it knows that when you give it a non-callable type, then 
+      that's just the plain value, whereas when you give it a callable (I guess a one-arg
+      callable) that it should use that logic of new = `callable(old)`
       */}
   const [thinkCount, setThinkCount] = useState(1);
 
@@ -29,7 +33,10 @@ export default function Thought({ in_words="I forgot what I was thinking." }) {
 
 
 
-      {/* Everytime you click the element, the count goes up */}
+      {/* 
+        - Everytime you click the element, the count goes up
+        - onClick is an eventhander -- also not available to server componenets
+        */}
       <p onClick={handleThink}>
         (I've thought about this {thinkCount} times so far... click on this sentence
         to make me think about it again!)
