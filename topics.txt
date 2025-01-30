@@ -1,4 +1,3 @@
-not covered yet:
 - Python
   - ruff, linter and formatter
   - mypi (type checker)
@@ -11,7 +10,8 @@ not covered yet:
   - explain
   - normalization levels
 - cassandra
-- frontend
-  - next.js
-  - react
+- direnv
+  - direnv stdlib - https://direnv.net/man/direnv-stdlib.1.html
+  - PATH_add .direnv/bin
+- grep/sed/awk: add shell scripts demoing them that use the sample files
 

@@ -1,0 +1,10 @@
+Not covered
+  - sending http req, using resp in UI
+  - useEffect
+
+Covered:
+  - useState
+  - props
+  - next.js
+  - basic react components
+
