@@ -1,0 +1,14 @@
+#!/usr/bin/env zsh
+
+# Run this command from the learn_direnv directory.
+
+PS4=' $ ' # indicate different between commands vs output
+set -x
+: .envrc puts bin of this dir onto path
+cat .envrc
+
+: and inside that dir, is located these executables:
+ls bin
+
+: now can call greet
+greet Ladies and Gentlemen
