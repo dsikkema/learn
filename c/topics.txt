@@ -1,3 +1,6 @@
+TOODO:
+ - the hashmap + related all need to be moved into their own dir and given their own Makefile
+ - a Makefile to run any individual c file
 Covered topics:
 - function pointers and coercions (implicit and explicit)
 - heap vs stack memory, printing their addresses to see how memory addresses colocate
