@@ -71,19 +71,19 @@ try:
             new_data = conn.recv(1024).decode()
             data = new_data
             term_pos = new_data.find(term_str)
-            print(f"Start read: {new_data, term_pos}")
+            print(f"SERVER: Start read: new_data=[{new_data}], term_pos={term_pos}")
             while (str(new_data) and term_pos == -1):
                 new_data = conn.recv(1024).decode()
                 data += new_data
                 term_pos = data.find(term_str)
-                print(f"(end) Loop read: {new_data, term_pos}")
+                print(f"SERVER: (end loop) read: new_data=[{new_data}], term_pos={term_pos}")
             
             # case where client closed connection without laughter.
             if not new_data:
-                print("Received incomplete message (not LMAO-compatible)")
+                print("SERVER: Received incomplete message (not LMAO-compatible)")
                 continue # should still close connection in finally block
             data = data[:term_pos] # omit bytes after terminal string
-            print(f"Received message: {data}")
+            print(f"SERVER: Received message: data=[{data}]")
 
 
             # LMAO protocol supports shutting down the server by way of a client message.
