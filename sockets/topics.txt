@@ -1,1 +1,2 @@
 - implement multithreaded LMAO-compatible server
+- manage packets

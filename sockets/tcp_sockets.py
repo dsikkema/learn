@@ -6,6 +6,8 @@ import sys
 # I'm getting TCP. And I'm getting a "server socket" with this, which will helpfully
 # manage and coordinate lots of requests from multiple clients which may be happening
 # all at once, but which it will sort into different client sockets for me to read from.
+
+# If it were UDP, there would just be one socket, this one, to call recv/send on.
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 active_connections = set()
