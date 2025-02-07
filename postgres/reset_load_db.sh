@@ -7,6 +7,8 @@ set -e # fail whole script on any error
 REQUIRED_VARS=('PGHOST' 'PGPASSWORD' 'PGUSER' 'PGPORT' 'PGDATABASE')
 MISSING_VARS=()
 
+CONTAINER_NAME='dvd_rentals_pg'
+
 # $arr[@] - the @ means all elements of array
 # "$arr[@]" - the @ means all elements, but preserving spaces _inside_ elements,
 #             rather than exploding space-separated words in an element into 
@@ -34,16 +36,44 @@ test -f $ARCHIVE_NAME && rm $ARCHIVE_NAME # -f flag is required for test to chec
 echo "Unzip archive"
 unzip dvdrental.zip
 
-echo "Start docker container just in case"
-docker start dvd_rentals_pg
+# docker inspect produces json with lots of metadata about container and its state
+# jq command reads "State.Running" from the first array element (there is an array
+# element returned for each container requested in the inspect command)
+container_running=$(docker inspect $CONTAINER_NAME | jq -r ".[0].State.Running")
+if [[ $container_running == "false" ]]; then
+    echo "Starting docker container $CONTAINER_NAME"
+    docker start dvd_rentals_pg
+else
+    echo "Container $CONTAINER_NAME already running"
+fi
 
-echo "Make sure archive is there"
 test $ARCHIVE_NAME
+if test -f $ARCHIVE_NAME; then
+    echo "Archive $ARCHIVE_NAME is present"
+else
+    echo "Archive $ARCHIVE_NAME not found"
+    exit 1
+fi
+
+# -q flag for pg_isready means quiet
+i=0
+while ! pg_isready -q && ((i<10)); do
+    echo "Waiting for postgres server to start"
+    i=$((i+1))
+    sleep 1
+done
+
+if ! pg_isready -q; then
+    echo "Postgres server didn't start in time"
+    exit 1
+else
+    echo "Postgres server ready"
+fi
 
 echo "Create and restore db $PGDATABASE from empty."
 
-# two different -c commands because each command is in its own transaction; drop database can't 
-# happen inside a txn block.
+# two different -c commands, otherwise they'll be put into txn blocks, and database update
+# commands cannot be in a txn block
 psql -d postgres -c "DROP DATABASE IF EXISTS $PGDATABASE;" -c "CREATE DATABASE $PGDATABASE;"
 pg_restore -d $PGDATABASE $ARCHIVE_NAME
 
