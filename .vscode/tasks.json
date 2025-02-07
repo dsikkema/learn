@@ -2,9 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run Executable",
+            "label": "Run Like Dale",
             "type": "shell",
-            "command": "${file}",
+            "command": "dalerun ${fileBasename}",
             "options": {
                 "cwd": "${fileDirname}"
             },

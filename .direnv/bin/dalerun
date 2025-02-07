@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -e
+eval "$(direnv export bash)"
+filename=$1
+test -f $filename
+extension=${filename##*.}
+
+case $extension in
+    # TOODO: dedicated handler programs for each extension
+    py)
+        # TOODO: grep for pytest in order to decide whether to run file with python vs pytest
+        uv run $filename
+        ;;
+    sh)
+        ./$filename
+        ;;
+    sql)
+        psql -c "SET SESSION CHARACTERISTICS AS TRANSACTION READ ONLY;" -f $filename
+        ;;
+    *)
+        echo "Unsupported extension: $extension"
+        ;;
+esac

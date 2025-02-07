@@ -1,5 +1,3 @@
 .DS_Store
-#.envrc 
-# I really should have .envrc here, typically, except
-# I want to commit and not ignore that file in the 
-# learn_direnv dir
+.envrc 
+!learn_direnv/.envrc
