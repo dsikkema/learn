@@ -277,3 +277,11 @@ order by
     payment_date desc
 limit 15;
 
+/**
+* Note: there are also FIRST_VALUE/LAST_VALUE window functions with return
+* first and last value in the window.
+* 
+* Other interesting ones to touch on later include:
+* RANK/DENSE_RANK
+* NTILE
+**/
