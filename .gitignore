@@ -1,3 +1,4 @@
 .DS_Store
 .envrc 
 !learn_direnv/.envrc
+scratch
