@@ -58,7 +58,7 @@ select
 from rental r
 join inventory i on r.inventory_id = i.inventory_id
 order by rental_number_overall
-limit 15;
+limit 7;
 
 select 'for payments: select payment amounts, compared against the average amout
 of a payment made by that customer (averaged over all payments from that customer).
@@ -92,8 +92,8 @@ select
 from 
     numbered_rows
 WHERE
-    customer_row_num <= 5
-limit 15
+    customer_row_num <= 3
+limit 7
 ;
 
 select 'same as above, except with the addition of an order by clause
@@ -120,14 +120,36 @@ select
 from 
     numbered_rows
 WHERE
-    customer_row_num <= 5
-limit 15
+    customer_row_num <= 3
+limit 7
 ;
+
+select 'LEAD basic: get row ahead, or N rows ahead';
+
+select 
+    customer_id,
+    rental_date,
+    LEAD(rental_date) over (
+        partition by customer_id order by rental_date
+    ) as next_rental_date,
+    LEAD(rental_date, 2) over (
+        partition by customer_id order by rental_date
+    ) as the_rental_after_next_date
+from 
+    rental
+where 
+    customer_id in (100, 101, 102)
+order by
+    rental_date
+limit 10;
 
 select 'use LEAD() - get, for each rental, the next time the customer made a rental. 
 Put that into a CTE so that it can be used without redundant recalculation (remember, 
 aliases aren''t available yet) to compute the time it took after this rental in order
-to make the next.';
+to make the next.
+
+LEAD essentially just looks at which row comes after.
+';
 
 with rentals_with_next as (
     select 
@@ -140,10 +162,118 @@ with rentals_with_next as (
         rental
 ) select 
     *,
+    /**
+     * This works because NULL - datetime produces NULL, but the next
+     * example will show explicitly handling the NULL case.
+     */
     next_rental - rental_date as time_till_next_rental
 from
     rentals_with_next
 order by
-    rental_date
+    rental_date 
+limit 5;
+
+select 'Now, we''ll do the same thing except ordering the result
+set in descending order by rental_date to show what happens when 
+there is no next row: what is LEAD() for the last row in a partition?
+It produces NULL for the asked-fow column.';
+
+with rentals_with_next as (
+    select 
+        customer_id,
+        rental_date,
+        LEAD(rental_date) over (
+            partition by customer_id order by rental_date
+        ) as next_rental
+    from 
+        rental
+) select 
+    *,
+    /**
+     * Strictly speaking the below unnecessary: NULL-datetime produces NULL,
+     * but this just shows how to explicitly handle these things.
+     */
+    CASE
+        when next_rental is null then null
+        else next_rental - rental_date
+    END as time_till_next_rental
+from
+    rentals_with_next
+order by
+    rental_date desc
+limit 10;
+
+select 'Now let''s look at LAG() - the same, but for the previous row.
+Find payment amount along with the previous payment amount for each customer.
+
+Also ordering result set descending because the initial payments
+don''t have previous payments so they render as null';
+
+select
+    customer_id,
+    payment_date,
+    amount,
+    LAG(amount) over (
+        partition by customer_id order by payment_date
+    ) as prev_payment
+from 
+    payment
+order by
+    payment_date desc
+limit 10;
+
+select 'By the way, here''s how to use coalesce to default null values. 
+Same as above but order ascending to handle nulls. We''ll need to convert the 
+previous payment to a string so it''s a consistent datatype no matter what';
+
+select
+    customer_id,
+    payment_date,
+    amount,
+    coalesce(
+        LAG(amount) over (
+            partition by customer_id order by payment_date
+        )::varchar, -- convert 'numberic' type to 'varchar'
+        'n/a (first payment)' -- alternately, but less sensibly, we could default this to a numeric like 0
+    ) as prev_payment
+from 
+    payment
+order by
+    payment_date asc -- asc is default anyway, just showing it explicitly
+limit 10;
+
+select 'anomaly detecting: detect whether the payment amount for a rental
+is more than double the running average for that customer over their 3 most 
+recent rentals.
+
+Use ROWS BETWEEN to establish a sliding window, not just from the beginning
+until current, and not just "all the rows", but arbitrary: X rows before and 
+Y rows after
+
+use a subquery this time rather than CTE';
+
+select
+    customer_id,
+    payment_date,
+    amount,
+    round(running_avg::numeric, 2) as running_avg,
+    amount > 2 * running_avg as is_anomaly
+from (
+        select 
+            customer_id,
+            payment_date,
+            amount,
+            avg(amount) over (
+                partition by customer_id 
+                order by payment_date 
+                rows between 3 preceding and 1 preceding
+            ) as running_avg
+        from 
+            payment
+    ) subquery
+where 
+    customer_id in (100, 101, 102)
+order by
+    payment_date desc
 limit 15;
 
