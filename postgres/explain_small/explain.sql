@@ -232,10 +232,50 @@ for each t2 in [the seq scan of t2, filtering on c < 50]:
 **/
 
 
+select 'SQL: now with machine code (JIT)';
+EXPLAIN
+select *
+from
+  numbers_large_tbl t1 join
+  numbers_large_tbl t2 on (t1.id = t2.id or t1.b < t2.c or t2.b < (t1.c + t2.c))
+where
+  t1.id between 50000 and 75000
+  and t2.id between 10000 and 60000
+  and t1.id > 5 
+  and t2.c < 95000
+  and t1.b + t2.b < 125000
+  ;
+/**
+                                                      QUERY PLAN                                                      
+----------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.58..32605583.11 rows=219547827 width=24)
+   Join Filter: (((t1.b + t2.b) < 125000) AND ((t1.id = t2.id) OR (t1.b < t2.c) OR (t2.b < (t1.c + t2.c))))
+   ->  Index Scan using numbers_large_tbl_pkey on numbers_large_tbl t2  (cost=0.29..1942.39 rows=47126 width=12)
+         Index Cond: ((id >= 10000) AND (id <= 60000))
+         Filter: (c < 95000)
+   ->  Materialize  (cost=0.29..1112.11 rows=25157 width=12)
+         ->  Index Scan using numbers_large_tbl_pkey on numbers_large_tbl t1  (cost=0.29..986.33 rows=25157 width=12)
+               Index Cond: ((id >= 50000) AND (id <= 75000) AND (id > 5))
+ JIT:
+   Functions: 12
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+(11 rows)
+
+Note:
+WHAT THE HECK, JIT in postgres is so cool.
+
+Estimated cost is quite high, so the planner writes and compiles a little program down to actual machine code
+(if LLVM support is enabled in the postgres server binary, if it was enabled during the pg binary's own compilation)
+to run your query. The machine code directly reads the disk for indexes, rows, comparing values for filters, sorting,
+etc.
+
+**/
+
 /**
 TOODO:
-bitmap index scan: don't go to disk to read the actual rows. just get the bitmap.
-You can AND/OR that with other bitmaps, and then potentially have fewer trips 
-to the disk to have to make.
-
+bitmap index scan: use info from the index to populate a bitmap of rows that match
+the index condition, and don't (immediately) return the rows. Instead, do bitwise
+operations with other bitmaps, like AND-ing two bitmaps to AND their conditions.
+Then do a heap scan for rows that are "1" in the resulting bitmap. Means fewer
+disk reads.
 **/

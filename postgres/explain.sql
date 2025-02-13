@@ -7,6 +7,7 @@ running avg)
 ';
 
 select 'First method: subquery';
+explain
 select
     customer_id,
     payment_date,
@@ -33,7 +34,7 @@ order by
 limit 15;
 
 select 'second method: CTE';
-
+explain analyze
 with payments_with_running_avg as (
     select 
         customer_id,
