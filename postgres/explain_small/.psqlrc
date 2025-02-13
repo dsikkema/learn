@@ -1,0 +1,2 @@
+-- can set custom location for this file with PSQLRC env var
+\set ON_ERROR_STOP on

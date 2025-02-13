@@ -1,0 +1,10 @@
+subqueries:
+
+ - can use them both in FROM and WHERE, e.g.
+
+EXPLAIN VERBOSE SELECT unique1
+FROM tenk1 t
+WHERE t.ten < ALL (SELECT o.ten FROM onek o WHERE o.four = t.four);
+
+ - Q: what are the rules for outer query being able to reference tables/columns that are referenced inside the subquery, or subquery accessing tables/columns in the outer query?
+

@@ -1,0 +1,7 @@
+other links:
+  https://speakdatascience.com/postgresql-best-practices/
+
+explain
+ - https://neon.tech/postgresql/postgresql-tutorial/postgresql-explain
+ - https://www.timescale.com/learn/explaining-postgresql-explain
+ - https://www.postgresql.org/docs/current/using-explain.html
