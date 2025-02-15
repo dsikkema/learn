@@ -16,6 +16,7 @@ So I've commented in the plans I've gotten when I've run these queries myself.
 -- prime the ANALYZE statistics
 ANALYZE numbers_large_tbl;
 ANALYZE numbers_small_tbl;
+ANALYZE numbers_indexed;
 commit; -- idk just in case need to commit the analyze statistics lol
 select 'seq scan';
 EXPLAIN
@@ -270,12 +271,56 @@ to run your query. The machine code directly reads the disk for indexes, rows, c
 etc.
 
 **/
-
+explain
+select *
+from
+  numbers_indexed
+where 
+  a < 1000 or
+  b > 99000;
 /**
-TOODO:
+                                  QUERY PLAN                                  
+------------------------------------------------------------------------------
+ Bitmap Heap Scan on numbers_indexed  (cost=48.51..619.15 rows=1966 width=12)
+   Recheck Cond: ((a < 1000) OR (b > 99000))
+   ->  BitmapOr  (cost=48.51..48.51 rows=1976 width=0)
+         ->  Bitmap Index Scan on idx_a  (cost=0.00..19.71 rows=989 width=0)
+               Index Cond: (a < 1000)
+         ->  Bitmap Index Scan on idx_b  (cost=0.00..27.82 rows=987 width=0)
+               Index Cond: (b > 99000)
+Note:
 bitmap index scan: use info from the index to populate a bitmap of rows that match
 the index condition, and don't (immediately) return the rows. Instead, do bitwise
 operations with other bitmaps, like AND-ing two bitmaps to AND their conditions.
 Then do a heap scan for rows that are "1" in the resulting bitmap. Means fewer
 disk reads.
+
+Here, get the bitmaps for the a and b conditions (both columns are indexed),
+OR them together, 
+
+BTW, here's a bunch of information I found about bitmaps!
+
+In PG, rows are stored in blocks. A block only contains one type of row (from one
+relation). Blocks are a linked list: each block has a reference to the position
+of the next block for that table. A TID is a tuple (row) identifier, consisting of the 
+block number, and the offset of the tuple inside that block.
+
+PG may go into a memory-saving mode of using a "chunked" bitmap where the entire
+block is treated as "all ones" or "all zeros" in the bitmap, in this case the scan
+knows which blocks to skip, but needs to recheck individual tuples inside the blocks
+that were 1. 
+
+Supposing not in that mode, the bitmap is essentially Hashmap<BlockNumber, bit sequence>
+(https://github.com/postgres/postgres/blob/master/src/backend/nodes/tidbitmap.c#L154),
+notwithstanding some extra fields and structs that decorate that structure. The bit
+sequence is [initialized to all 0s](https://github.com/postgres/postgres/blob/master/src/include/lib/simplehash.h#L417-L418),
+and the bitmap's size is the number of tuples that
+can fit in the block, even ones that don't exist or have been deleted. But while
+scanning the index, only rows that match are set to 1 in the bitmap. The TID is extracted
+from the index, the tid's block number used to look up the bitsequence in the hashmap, 
+and the tid's tuple offset used for bitshifting to set the correct bit in the bitsequence
+to 1 - https://github.com/postgres/postgres/blob/master/src/backend/nodes/tidbitmap.c#L421-L424.
+Tuples that exist but don't match, or "don't exist" for having been deleted already
+or never having been created, will always remain 0 (hence why you cannot just negate a 
+bitmap to get the rows which match the opposite of the condition scanned for).
 **/

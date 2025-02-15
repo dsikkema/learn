@@ -19,6 +19,14 @@ select * from generate_series(1, 3) a, generate_series(1,3) b;
 select 'Can treat the series as an arbitrary "do N times" loop';
 select random() from generate_series(1, 3);
 
+select 'Randomly generate lots of sample data to populate tables
+using randomly indexed arrays';
+select (
+    (ARRAY['Delaware', 'Kentucky', 'Montana'])[floor(random() * 3 + 1)],
+    current_date - floor(random() * 365 * 85)::integer
+) from
+    generate_series(1,5);
+
 -- select 'Can use to populate tables, particularly useful in the 
 -- select clause';
 

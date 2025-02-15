@@ -15,10 +15,23 @@ create table numbers_large_tbl(
     c integer
 );
 
+create table numbers_indexed(
+    a integer,
+    b integer,
+    c integer
+);
+
+create index idx_a on numbers_indexed(a);
+create index idx_b on numbers_indexed(b);
+
 -- use of SRF in select clause is postgres-specific, not SQL standard
 insert into numbers_small_tbl (b, c) 
 select generate_series(1,100), generate_series(100,1, -1); 
 
 insert into numbers_large_tbl (b, c)
 select num, 100000-num
+from generate_series(1, 100000) num;
+
+insert into numbers_indexed (a, b, c)
+select num, 100000-num, num % 2
 from generate_series(1, 100000) num;
