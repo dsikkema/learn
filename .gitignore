@@ -2,3 +2,5 @@
 .envrc 
 !learn_direnv/.envrc
 scratch
+favicon.ico
+target/

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WASM with C function</title>
+    <script src="target/hello.js"></script>
+    <script>
+        var greetFn;
+        Module.onRuntimeInitialized = function() {
+            /**
+             * cwrap needed because C strings are demonic so interchange
+             * between JS and C WASM that uses strings must be carefully
+             * managed by an intermediary (cwrap)
+             */
+            greetFn = Module.cwrap('greet', 'string', ['string']);
+        }
+        function sayHello(name) {
+            var name = document.getElementById("name").value;
+            var outEl = document.getElementById("output");
+            greetFn(name);
+        }
+
+        function squareMe(num) {
+            var num = document.getElementById("number").value;
+            var outEl = document.getElementById("squared_num");
+            /**
+             * No need to use cwrap because the interchange is purely
+             * integers, no strings. Note the underscore prefix, matching
+             * the format in which the compiler exported the function.
+             */
+            var result = Module._square(num);
+            outEl.textContent = `Dennis Ritchie says that ${num}^2 = ${result}`; 
+        }
+    </script>
+</head>
+<body>
+    <input type="text" id="name"/>
+    <button onclick="sayHello()">Greet</button>
+
+    <input type="text" id="number"/>
+    <button onclick="squareMe()">Square Me</button>
+    <pre id="squared_num"></pre>
+</body>
+</html>
