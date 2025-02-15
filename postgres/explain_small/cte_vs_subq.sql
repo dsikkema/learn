@@ -54,10 +54,10 @@ ation. Materialization is when the results of the CTE are precomputed before
 the CTE is used. Can be valuable to prevent recomputing on each use if CTE
 is a complex calculation or used many times, but can pose a problem in case
 it prevents outer-level constraints (like where c=42) from being "pushed 
-down" into the CTE to restrict its own results. When I explicitly enable
-materialization on my CTE, estimated (and real) cost is much worse, I don''t get filtering on
-the lead-node seq scan on numbers_large_tbl, and it''s clearly more com-
-plex';
+down" into the CTE to winnow down the result set it produces. When I explicitly enable
+materialization on my CTE, the estimated cost and real time to execute are both much worse,
+I don''t get filtering on the leaf node seq scan on numbers_large_tbl 
+(this *did* happen in the previous plans, which helped improve their performance).';
 explain analyze
 with cte as materialized (
         select c, count(c) ct from 
