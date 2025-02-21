@@ -4,3 +4,4 @@
 scratch
 favicon.ico
 target/
+__pycache__/

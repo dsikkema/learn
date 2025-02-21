@@ -72,7 +72,7 @@ until all the others are finished and returns their results all combined.
 """
 
 async def f1(key: str, use_async_sleep: bool = True):
-    print("Inside task: about to sleep 0.5 seconds")
+    print("Inside task: about to sleep 0.25 seconds")
     if use_async_sleep:
         await asyncio.sleep(0.25) # when the "await" is blocking, the kernel switches to running other things in parallel
                                  # two tasks will only take about 0.25 seconds, being in parallel
@@ -105,7 +105,7 @@ async def create_eager_tasks():
     # was called.
     tasks = [asyncio.create_task(co) for co in (f1('cool'), f1('dude'))]
     await asyncio.sleep(0.1)
-    print(f"Now awaiting them")
+    print("Now awaiting them")
     # note the special processing needed, right below, because I'm returning
     # a generator (an async generator)
     return (await t for t in tasks) 
