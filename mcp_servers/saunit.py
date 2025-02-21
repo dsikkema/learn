@@ -54,12 +54,12 @@ def sonnet_opinion(sonnet_num: int):
     """
     if sonnet_num > 154:
         return "Hold up, there were only 154 Sonnets! I will NOT give you my opinion."
-    
+    default_opinion = "Here's the main thing: it's extremely CLEVER."
     return {
         18: "Pretty nifty! We like it, but it's not the best.",
         129: "What malignant force of music in these lines! Extremely good.",
         44: "We try not to read this too much, we don't like it."
-    }.get(sonnet_num, "Here's the main thing: it's extremely CLEVER.")
+    }.get(sonnet_num, default_opinion)
 
 if __name__ == "__main__":
     # lines = [
