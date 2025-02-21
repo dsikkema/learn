@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+echo
+script_path="$(realpath "$0")"
+script_dir="$(dirname "$script_path")/.."
+logfile=$(uv --project "$script_dir" run llm logs path)
+query="select datetime_utc,x'0a0a',response,x'0a0a' from responses order by datetime_utc desc limit $1;"
+sqlite3 "$logfile" "$query"

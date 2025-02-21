@@ -1,3 +1,4 @@
+# aisaac
 Usage:
 ```
 $ aisaac "<question to ask the LLM>"
@@ -62,5 +63,25 @@ Recommended immediate actions include:
 - ...
 ```
 
+# aisaac-repeat
+For when you got the answer, lost the terminal output, and need to get it back without wasting precious pennies by re-asking the question.
+```
+ $ aisaac-repeat 2  
+
+2025-02-21T21:22:21.112977+00:00|
+
+|Great question! In the `tree` command, you can use the `-exec` option directly, similar to...
+ 
+2025-02-21T21:01:15.358302+00:00|
+
+|For tree, you can use multiple -P (pattern) flags like: 
+tree -P "*.txt" -P "*.log"
+...
+```
+
+# path mgmt
+I'm symlinking to both of these binaries directly underneath a different 'bin' directory on my machine which is already on my $PATH.
+
 # TOODO:
 Do `export LLM_USER_PATH=llm_configs` to preserve prompts under source control.
+
