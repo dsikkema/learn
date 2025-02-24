@@ -71,7 +71,7 @@ def merge_sort(ls: list[int]):
     merge_sort_arr(arr)
     return list(arr)
 
-def test_very_large_sort():
+def test_100_item_sort():
     """
     When running with `pytest multiprocess_merge_sort.py::test_very_large_sort -s` (to see printed output) we
     see the multiprocessing version takes a huge amount of extra time. It wasn't expected to really go much
@@ -92,12 +92,12 @@ def test_very_large_sort():
     # sorted is not in-place
     expected_sorted = sorted(src) 
     toc = time()
-    print(f"system sort time: {toc-tic:.2f}")
+    print(f"\nsystem sort time: {toc-tic:.2f}")
 
     tic = time()
     actual_sorted = merge_sort(src)
     toc = time()
-    print(f"multiprocess sort time: {toc-tic:.2f}")
+    print(f"\nmultiprocess sort time: {toc-tic:.2f}")
     assert actual_sorted == expected_sorted
 
 
