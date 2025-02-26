@@ -5,3 +5,6 @@ scratch
 favicon.ico
 target/
 __pycache__/
+.cursorrules
+.cursor/
+.vscode/
