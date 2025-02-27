@@ -1,0 +1,10 @@
+services:
+  linux_dev:
+    build: .
+    container_name: linux_dev
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./c:/c
+      - ./assembly:/assembly
+    command: sleep infinity
