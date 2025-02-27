@@ -17,6 +17,8 @@ const createWindow = () => {
     })
 
     win.loadFile('index.html')
+    // could also load a remote-served web app by pulling URL:
+    // win.loadURL('https://www.ag.state.mn.us/consumer/publications/HowtoProtectYourselfAgainstHackers.asp')
 }
 
 /**
