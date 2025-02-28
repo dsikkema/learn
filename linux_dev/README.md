@@ -8,6 +8,30 @@ docker-compose up -d # one time setup
 docker start linux_dev # whenever the container is stopped, neet to start before exec-ing into it
 docker exec -it linux_dev bash # get into the container
 ```
+# Assembly Architecture
+My host machine has Apple Silicon and therefore the ubuntu container, by default, uses the same architecure:
+
+```bash
+$ uname -m # host
+arm64
+
+...
+
+$ uname -m # linux_dev container
+aarch64 # different name for the same architecture (mac vs ubuntu naming conventions)
+```
+
+This means I have to write assembly targetted towards that architecture.
+
+## x86 side note:
+But through the magic of emulation, it's also possible to run docker containers where the image is targeted to a different
+architecture. Emulation imposes a performance penalty, but it's doable. By default, docker chooses an image architecture
+fitting the host machine's architecture, but this can be overridden:
+
+```bash
+ $ docker run --platform linux/amd64 -it debian:latest uname -m
+x86_64
+```
 
 # Development Example
 ```bash
