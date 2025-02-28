@@ -17,6 +17,9 @@ case $extension in
     sql)
         psql -c "SET SESSION CHARACTERISTICS AS TRANSACTION READ ONLY;" -f $filename
         ;;
+    c)
+        gcc "$filename" -o "target/${filename%.*}" && "target/${filename%.*}"
+        ;;
     *)
         echo "Unsupported extension: $extension"
         ;;
