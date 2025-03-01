@@ -3,6 +3,8 @@ than in Macos.
 
 Mounts c and assembly dirs into the container so code can be edited on host machine but run in linux.
 # Usage
+
+## Docker setup / bash
 ```bash
 docker-compose up -d # one time setup
 docker start linux_dev # whenever the container is stopped, neet to start before exec-ing into it
@@ -13,6 +15,25 @@ If already created container, can start and exec into it with
 ```bash
 ./linux_bash.sh
 ```
+
+## Running assembly code
+
+In container:
+```bash
+root@9d83899b4334:/# cd assembly/
+root@9d83899b4334:/assembly# ./assemble_link_run.sh hello_world.s 
+Hello, world
+Exited with code: 0
+```
+
+In host:
+```bash
+ $ cd assembly/
+ $ ./runinlinux.sh hello_world.s 
+Hello, world
+Exited with code: 0
+```
+
 # Assembly Architecture
 My host machine has Apple Silicon and therefore the ubuntu container, by default, uses the same architecure:
 

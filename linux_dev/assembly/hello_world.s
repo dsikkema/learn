@@ -1,4 +1,7 @@
 .global _start
+
+.text
+
 _start:
     mov x8, #64             // 64: write syscall
     mov x0, #1              // file descriptor (1: stdout)
@@ -9,6 +12,8 @@ _start:
     mov x0, #0              // Start exiting
     mov x8, #93
     svc #0
+
+.data
 
 hello_str:
     .ascii "Hello, world\n"
