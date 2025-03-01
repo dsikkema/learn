@@ -8,6 +8,11 @@ docker-compose up -d # one time setup
 docker start linux_dev # whenever the container is stopped, neet to start before exec-ing into it
 docker exec -it linux_dev bash # get into the container
 ```
+
+If already created container, can start and exec into it with
+```bash
+./linux_bash.sh
+```
 # Assembly Architecture
 My host machine has Apple Silicon and therefore the ubuntu container, by default, uses the same architecure:
 
