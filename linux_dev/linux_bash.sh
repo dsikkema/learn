@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-docker start linux_dev
+./lazy_start_linux.sh
 docker exec -it linux_dev bash
