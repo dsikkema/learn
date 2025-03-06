@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+tsc --noEmit "$1" && tsx "$1"

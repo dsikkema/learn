@@ -1,0 +1,19 @@
+{
+  "name": "hello-typescript",
+  "version": "1.0.0",
+  "main": "hello.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsx": "tsc --noEmit $1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9"
+  }
+}
