@@ -13,7 +13,7 @@ int main() {
   printf("float %%f: %f\n", 2.3);
   printf("signed (int, default),  %%d: %d\n", -1);
   printf("unsigned (int, default),  %%u: %u\n", 4294967295);
-  printf("unsigned (same as above but typed in code as \"-1)\",  %%u: %u\n", 4294967295);
+  printf("unsigned (same as above but typed in code as \"-1)\",  %%u: %u\n", -1);
   printf("signed (long),  %%ld: %ld\n", LONG_MAX);
   printf("unsigned (long),  %%lu: %lu\n", ULONG_MAX);
   char mychar = 1;
